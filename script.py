@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.io import loadmat
 from scipy.optimize import minimize
+import math
 
 
 def preprocess():
@@ -104,17 +105,24 @@ def blrObjFunction(initialWeights, *args):
                     error function
     """
     train_data, labeli = args
-
     n_data = train_data.shape[0]
     n_features = train_data.shape[1]
+    
     error = 0
     error_grad = np.zeros((n_features + 1, 1))
-
+    
+    bias = np.ones((n_data,1))
+    X = np.append(bias,train_data,axis=1)
+    theta = sigmoid(np.dot(X,initialWeights))
+    error = np.sum(np.multiply(np.array(labeli,ndmin=1).T,np.log(theta)).T + np.multiply(np.array(1-labeli,ndmin=1).T,np.log(1-theta)).T)/n_data*-1
+    error_grad = (np.dot((theta.T-np.array(labeli,ndmin=1).T),X).T).T.flatten()/n_data
+    #print(error)
+    #print(train_data)
     ##################
     # YOUR CODE HERE #
     ##################
     # HINT: Do not forget to add the bias term to your input data
-
+    
     return error, error_grad
 
 
@@ -133,8 +141,20 @@ def blrPredict(W, data):
          corresponding feature vector given in data matrix
 
     """
-    label = np.zeros((data.shape[0], 1))
-
+    X = data
+    label = np.zeros((X.shape[0], 1))
+    bias = np.ones((X.shape[0], 1))
+    X = np.append(bias,X,axis=1)
+    rows = X.shape[0]
+    for j in range (rows):
+        max_out = 0
+        max_n=0
+        for i in range (10):
+            temp = sigmoid(np.inner(W[:,i].T,X[j,]))
+            if temp > max_out:
+                max_out = temp
+                max_n=i
+            label[j][0]=max_n
     ##################
     # YOUR CODE HERE #
     ##################
