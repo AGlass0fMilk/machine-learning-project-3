@@ -2,6 +2,7 @@ import numpy as np
 from scipy.io import loadmat
 from scipy.optimize import minimize
 import math
+from sklearn import svm
 
 
 def preprocess():
@@ -236,7 +237,7 @@ for i in range(n_class):
     Y[:, i] = (train_label == i).astype(int).ravel()
 
 # Logistic Regression with Gradient Descent
-W = np.zeros((n_feature + 1, n_class))
+'''W = np.zeros((n_feature + 1, n_class))
 initialWeights = np.zeros((n_feature + 1, 1))
 opts = {'maxiter': 100}
 for i in range(n_class):
@@ -257,6 +258,8 @@ print('\n Validation set Accuracy:' + str(100 * np.mean((predicted_label == vali
 predicted_label = blrPredict(W, test_data)
 print('\n Testing set Accuracy:' + str(100 * np.mean((predicted_label == test_label).astype(float))) + '%')
 
+'''
+
 """
 Script for Support Vector Machine
 """
@@ -267,6 +270,47 @@ print('\n\n--------------SVM-------------------\n\n')
 ##################
 
 
+# Requirements:
+# 1.) Use Linear Kernel
+# 2.) Use radial basis function with gamma of 1
+# 3.) Use radial basis function with default gamma
+# 4.) Use radial basis function with default gamma, vary C:(1,10,20,30,...,100)
+#     Plot accuracy vs values of C
+
+
+# Returns the percentage of matching entries in vectors x and y
+def compareVectors(x, y):
+    return 100 * np.mean((x == y).astype(float))
+
+def getSVMAccuracy(svc, train_data, train_label, val_data, val_label, test_data, test_label):
+    svc.fit(train_data, train_label)
+
+    val_predict = svc.predict(val_data)
+    test_predict = svc.predict(test_data)
+
+
+
+svm1 = svm.SVC(kernel='linear')
+
+svm1.fit(train_data, train_label)
+y_train1 = svm1.fit(train_data)
+y_val1 = svm1.fit(validation_data)
+y_test1 = svm1.fit(test_data)
+
+print("SVM 1 Training Accuracy: " + str(compareVectors(train_label, y_train1)))
+print("SVM 1 Validation Accuracy: " + str(compareVectors(validation_label, y_val1)))
+print("SVM 1 Test Accuracy: " + str(compareVectors(test_label, y_test1)))
+
+exit()
+
+svm2 = svm.SVC(kernel='rbf', gamma=1.0)
+svm3 = svm.SVC(kernel='rbf')
+
+Cs = [1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+for c in Cs:
+    svm4 = svm.SVC(kernel='rbf', C=c)
+
+exit()
 """
 Script for Extra Credit Part
 """
