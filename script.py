@@ -3,6 +3,11 @@ from scipy.io import loadmat
 from scipy.optimize import minimize
 import math
 from sklearn import svm
+from sklearn.metrics import accuracy_score
+
+def printToFile(input):
+    with open("log.txt", 'a') as file:
+        file.write(input + "\n")
 
 
 def preprocess():
@@ -265,6 +270,7 @@ Script for Support Vector Machine
 """
 
 print('\n\n--------------SVM-------------------\n\n')
+printToFile('\n\n--------------SVM-------------------\n\n')
 ##################
 # YOUR CODE HERE #
 ##################
@@ -280,35 +286,91 @@ print('\n\n--------------SVM-------------------\n\n')
 
 # Returns the percentage of matching entries in vectors x and y
 def compareVectors(x, y):
-    return 100 * np.mean((x == y).astype(float))
+    #return 100 * np.mean((x == y).astype(float))
+    return accuracy_score(y, x) * 100
 
 def getSVMAccuracy(svc, train_data, train_label, val_data, val_label, test_data, test_label):
+    #svc.fit(train_data, np.ravel(train_label))
     svc.fit(train_data, train_label)
 
+
+    train_predict = svc.predict(train_data)
     val_predict = svc.predict(val_data)
     test_predict = svc.predict(test_data)
 
+    train_acc = compareVectors(train_label, train_predict)
+    val_acc = compareVectors(validation_label, val_predict)
+    test_acc = compareVectors(test_label, test_predict)
+
+    return (train_acc, val_acc, test_acc)
 
 
-svm1 = svm.SVC(kernel='linear')
+# Append bias term to beginning
+bias = np.ones([np.shape(train_data)[0], 1])
+train_data = np.append(train_data, bias, axis=1)
+bias = np.ones([np.shape(validation_data)[0], 1])
+validation_data = np.append(validation_data, bias, axis=1)
+bias = np.ones([np.shape(test_data)[0], 1])
+test_data = np.append(test_data, bias, axis=1)
 
-svm1.fit(train_data, train_label)
-y_train1 = svm1.fit(train_data)
-y_val1 = svm1.fit(validation_data)
-y_test1 = svm1.fit(test_data)
 
-print("SVM 1 Training Accuracy: " + str(compareVectors(train_label, y_train1)))
-print("SVM 1 Validation Accuracy: " + str(compareVectors(validation_label, y_val1)))
-print("SVM 1 Test Accuracy: " + str(compareVectors(test_label, y_test1)))
+'''svm1 = svm.SVC(kernel='linear')
+
+#for i in train_label:
+#    print(i)
+#quit()
+
+train_acc, val_acc, test_acc = getSVMAccuracy(svm1, train_data, train_label, validation_data, validation_label,
+                                              test_data, test_label)
+
+print("SVM 1 Training Accuracy: " + str(train_acc))
+printToFile("SVM 1 Training Accuracy: " + str(train_acc))
+print("SVM 1 Validation Accuracy: " + str(val_acc))
+printToFile("SVM 1 Validation Accuracy: " + str(val_acc))
+print("SVM 1 Test Accuracy: " + str(test_acc))
+printToFile("SVM 1 Test Accuracy: " + str(test_acc))
+'''
+
+svm1 = svm.SVC(kernel='rbf', gamma=1.0)
+
+train_acc, val_acc, test_acc = getSVMAccuracy(svm1, train_data, train_label, validation_data, validation_label,
+                                              test_data, test_label)
+
+print("SVM 2 Training Accuracy: " + str(train_acc))
+printToFile("SVM 2 Training Accuracy: " + str(train_acc))
+print("SVM 2 Validation Accuracy: " + str(val_acc))
+printToFile("SVM 2 Validation Accuracy: " + str(val_acc))
+print("SVM 2 Test Accuracy: " + str(test_acc))
+printToFile("SVM 2 Test Accuracy: " + str(test_acc))
+
+svm1 = svm.SVC(kernel='rbf')
+
+train_acc, val_acc, test_acc = getSVMAccuracy(svm1, train_data, train_label, validation_data, validation_label,
+                                              test_data, test_label)
+
+print("SVM 3 Training Accuracy: " + str(train_acc))
+printToFile("SVM 3 Training Accuracy: " + str(train_acc))
+print("SVM 3 Validation Accuracy: " + str(val_acc))
+printToFile("SVM 3 Validation Accuracy: " + str(val_acc))
+print("SVM 3 Test Accuracy: " + str(test_acc))
+printToFile("SVM 3 Test Accuracy: " + str(test_acc))
 
 exit()
 
-svm2 = svm.SVC(kernel='rbf', gamma=1.0)
-svm3 = svm.SVC(kernel='rbf')
-
 Cs = [1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-for c in Cs:
-    svm4 = svm.SVC(kernel='rbf', C=c)
+for i, c in enumerate(Cs):
+    svm1 = svm.SVC(kernel='rbf', C=c)
+    train_acc, val_acc, test_acc = getSVMAccuracy(svm1, train_data, train_label, validation_data, validation_label,
+                                                  test_data, test_label)
+
+    print("SVM 4 - C = " + str(c) + " - #" + str(i))
+    print("SVM 4 Training Accuracy: " + str(train_acc))
+    printToFile("SVM 4 Training Accuracy: " + str(train_acc))
+    print("SVM 4 Validation Accuracy: " + str(val_acc))
+    printToFile("SVM 4 Validation Accuracy: " + str(val_acc))
+    print("SVM 4 Test Accuracy: " + str(test_acc))
+    printToFile("SVM 4 Test Accuracy: " + str(test_acc))
+
 
 exit()
 """
