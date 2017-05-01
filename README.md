@@ -1,29 +1,6 @@
-# README #
+The params.pickle file contains the weight matrix.  
+To obtain the weight object run the line 
 
-This README would normally document whatever steps are necessary to get your application up and running.
+W = pickle.load( open( "params.pickle", "rb" ) )
 
-### What is this repository for? ###
-
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
-
-### How do I get set up? ###
-
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+and W will now contain the weight matrix.
